@@ -1,0 +1,320 @@
+basePath: /
+definitions:
+  apisql.DDLCreateTable:
+    properties:
+      columns:
+        items:
+          $ref: '#/definitions/apisql.TableField'
+        type: array
+      constraints:
+        items:
+          $ref: '#/definitions/apisql.TableField'
+        type: array
+    type: object
+  apisql.TableField:
+    properties:
+      name:
+        type: string
+      type:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  title: LTSE
+  version: 2.0.0
+paths:
+  /nosql/api/:
+    get:
+      description: |-
+        RestApi ElasticSearch 7.17 guide
+        https://www.elastic.co/guide/en/elasticsearch/reference/7.17/rest-apis.html
+      parameters:
+      - description: Optional PostgRest Options
+        in: path
+        name: proxyPath
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "409":
+          description: Conflict
+      summary: For use API ElasticSearch, initial path
+      tags:
+      - nosql API ElasticSearch
+  /nosql/index/{indexName}:
+    get:
+      description: Returns information about indexname index from the ltse nosql cluster
+      parameters:
+      - description: index name
+        in: path
+        name: indexName
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Internal Server Error
+      summary: Get index info
+      tags:
+      - noSQL API
+    put:
+      parameters:
+      - description: Index name
+        in: path
+        name: indexName
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "409":
+          description: Conflict
+      summary: Create index in elastic
+      tags:
+      - noSQL API
+  /nosql/index/{indexName}/document:
+    put:
+      description: Adds a json document to the specified <indexname > index of the
+        ltse nosql cluster and return id to makes it searchable
+      parameters:
+      - description: Index name
+        in: path
+        name: indexName
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "500":
+          description: Internal Server Error
+      summary: Add a json document to index without id
+      tags:
+      - noSQL API
+  /nosql/index/{indexName}/document/{id}:
+    get:
+      description: Retrieves the specified json document <_id> from the indexname
+        of the ltse nosql cluster.
+      parameters:
+      - description: Index name
+        in: path
+        name: indexName
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Internal Server Error
+      summary: Get json document by id
+      tags:
+      - noSQL API
+    put:
+      description: Add a json document to the specified <indexname> index of the ltse
+        nosql cluster and makes it searchable with an <_id>
+      parameters:
+      - description: Index name
+        in: path
+        name: indexName
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "500":
+          description: Internal Server Error
+      summary: Add a json document to index and makes it searchable with an id
+      tags:
+      - noSQL API
+  /sql/api/:
+    get:
+      description: |-
+        You must take into account that for some operations it is necessary to use specific headers such as **Accept-Profile** or **Content-Profile** both to indicate the name of the schema when making the request. You can get more information in the api guide.
+
+        **RestApi PostgRest 9.0.0 guide**
+        https://postgrest.org/en/v9.0/
+      parameters:
+      - description: Active Schema in PostgRest
+        in: header
+        name: Accept-Profile
+        required: true
+        type: string
+      - description: Optional PostgRest Options
+        in: path
+        name: proxyPath
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "409":
+          description: Conflict
+      summary: For use API PostgREST, initial path
+      tags:
+      - sql PostgREST
+  /sql/schemas:
+    get:
+      description: You can get the list activated schemas for use in API PostgREST
+        by using the option activesInPostgRest=true
+      parameters:
+      - description: If true, show only the activate schemas for to be used in PostgREST
+        in: query
+        name: activesInPostgRest
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Schema list message
+        "500":
+          description: Error message
+      summary: Get database schema list
+      tags:
+      - SQL API
+  /sql/schemas/{schemaName}:
+    post:
+      description: You can create an empty schema or import it from file.
+      parameters:
+      - description: Schema name
+        in: path
+        name: schemaName
+        required: true
+        type: string
+      - description: SQL file to import. The schema name in the script must be the
+          same as the declared schemaName field above.
+        in: formData
+        name: file
+        type: file
+      responses:
+        "200":
+          description: Schema created message
+        "500":
+          description: Error message
+      summary: Create schema in database
+      tags:
+      - SQL API
+    put:
+      description: You can Enable or disable the schema for use in API PostgREST
+      parameters:
+      - description: Schema name
+        in: path
+        name: schemaName
+        required: true
+        type: string
+      - description: Activate or deactivate the scheme in postrest
+        in: query
+        name: isActiveInPostgRest
+        required: true
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Schema updated message
+        "500":
+          description: Error message
+      summary: Enable or disable the schema for use in API PostgREST
+      tags:
+      - SQL API
+  /sql/schemas/{schemaName}/tables/{tableName}:
+    delete:
+      description: You can delete table on schema. You must first truncate the table.
+      parameters:
+      - description: Schema name
+        in: path
+        name: schemaName
+        required: true
+        type: string
+      - description: Schema name
+        in: path
+        name: tableName
+        required: true
+        type: string
+      - description: CASCADE or RESTRICT
+        in: query
+        name: constraint
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Table dropped message
+        "500":
+          description: Error message
+      summary: Delete table
+      tags:
+      - SQL API
+    post:
+      description: You can create a table on schema
+      parameters:
+      - description: Schema name
+        in: path
+        name: schemaName
+        required: true
+        type: string
+      - description: Schema name
+        in: path
+        name: tableName
+        required: true
+        type: string
+      - description: JSON
+        in: body
+        name: raw_body
+        schema:
+          $ref: '#/definitions/apisql.DDLCreateTable'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Table created messsage
+        "500":
+          description: Error message
+      summary: Create table
+      tags:
+      - SQL API
+    put:
+      description: You can truncate a table on schema.
+      parameters:
+      - description: Schema name
+        in: path
+        name: schemaName
+        required: true
+        type: string
+      - description: Schema name
+        in: path
+        name: tableName
+        required: true
+        type: string
+      - description: RESTART or IDENTITY
+        in: query
+        name: identity
+        type: string
+      - description: CASCADE or RESTRICT
+        in: query
+        name: constraint
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Table truncate message
+        "500":
+          description: Error message
+      summary: Truncate table
+      tags:
+      - SQL API
+swagger: "2.0"

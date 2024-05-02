@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "elastic.name" . }}-headless
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "elastic.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  clusterIP: None
+  publishNotReadyAddresses: true
+  ports:
+    - port: {{ .Values.elastic.service1.port }}
+      targetPort: {{ .Values.elastic.service1.targetPort }}
+      protocol: {{ .Values.elastic.service1.protocol }}
+  selector:
+    {{- include "elastic.selectorLabels" . | nindent 4 }}

@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "postgrest.name" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "postgrest.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.postgrest.autoscaling.enabled }}
+  replicas: {{ .Values.postgrest.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "postgrest.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "postgrest.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.postgrest.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.postgrest.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Values.postgrest.name }}
+          securityContext:
+            {{- toYaml .Values.postgrest.securityContext | nindent 12 }}
+          image: "{{ .Values.postgrest.image.repository }}:{{ .Values.postgrest.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.postgrest.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.postgrest.service1.containerPort }}
+              protocol: {{ .Values.postgrest.service1.protocol }}
+          resources:
+            {{- toYaml .Values.postgrest.resources | nindent 12 }}
+          {{- with .Values.postgrest.envVars }}
+          env:
+            - name: PGRST_DB_URI
+              value: {{ .pgrstDbUri | quote }}
+            - name: PGRST_DB_SCHEMA
+              value: {{ .pgrstDBSchema | quote }}
+            - name: PGRST_DB_ANON_ROLE
+              value: {{ .pgrstDbAnonRole | quote }}
+          {{- end }}
+      {{- with .Values.postgrest.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.postgrest.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.postgrest.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

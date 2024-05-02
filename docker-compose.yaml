@@ -1,0 +1,123 @@
+version: '3.7'
+name: ltse
+
+services:
+  ltse-api:
+    build:
+      context: ./
+    image: assistiot/ltse-api:latest
+    ports:
+      - 8080:8080
+    depends_on:
+      - ltse-postgres
+      - ltse-elastic
+    environment:
+      - POSTGRESQL_HOST=ltse-postgres
+      - POSTGRESQL_PORT=5432
+      - POSTGRESQL_USER=postgres
+      - POSTGRESQL_PASS=4ss1st10t
+      - POSTGRESQL_DB=assist
+      - ELASTIC_HOST=ltse-elastic
+      - ELASTIC_PORT=9200
+      - POSTGREST_HOST=ltse-postgrest
+      - POSTGREST_PORT=3000
+    networks:
+      - netltse
+    profiles:
+      - prod
+
+  postgres:
+    image: postgres:14.2
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=4ss1st10t
+      - POSTGRES_DB=assist
+    # Use profile disable internally only extend it and do not use it when running prod or dev profile.
+    profiles:
+      - disable
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - netltse
+
+  ltse-postgres:
+    extends:
+      service: postgres
+    profiles:
+      - prod
+
+  elastic:
+    image: elasticsearch:7.16.3
+    environment:
+      - discovery.type=single-node
+      - node.name=ltse
+    profiles:
+      - disable
+    volumes:
+      - elastic_data:/usr/share/elasticsearch/data
+    networks:
+      - netltse
+
+  ltse-elastic:
+    extends:
+      service: elastic
+    profiles:
+      - prod
+
+  postgrest:
+    image: postgrest/postgrest:v9.0.0
+    environment:
+      - PGRST_DB_URI=postgres://postgres:4ss1st10t@ltse-postgres/assist
+      - PGRST_DB_SCHEMA=public
+      - PGRST_DB_ANON_ROLE=postgres
+    networks:
+      - netltse
+    profiles:
+      - disable
+      
+  ltse-postgrest:
+    extends:
+      service: postgrest
+    depends_on:
+      - ltse-postgres
+    profiles:
+      - prod
+
+  dev-ltse-postgres:
+    extends:
+      service: postgres
+    ports:
+      - 5432:5432
+    profiles:
+      - dev
+
+  dev-ltse-elastic:
+    extends:
+      service: elastic
+    ports:
+      - 9200:9200
+      - 9300:9300
+    profiles:
+      - dev
+
+  dev-ltse-postgrest:
+    extends:
+      service: postgrest
+    depends_on:
+      - dev-ltse-postgres
+    environment:
+      - PGRST_DB_URI=postgres://postgres:4ss1st10t@ltse-postgres-dev/assist
+    ports:
+      - 3000:3000
+    profiles:
+      - dev
+
+volumes:
+  postgres_data:
+  elastic_data:
+
+networks:
+  netltse:
+    driver: bridge
+
+# TODO to persist the data, create volumes in ltse-postgres and ltse-elastic

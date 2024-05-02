@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "elastic.name" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "elastic.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.elastic.service1.type }}
+  ports:
+    - port: {{ .Values.elastic.service1.port }}
+      targetPort: {{ .Values.elastic.service1.targetPort }}
+      protocol: {{ .Values.elastic.service1.protocol }}
+      {{- if and (or (eq .Values.elastic.service1.type "NodePort") (eq .Values.elastic.service1.type "LoadBalancer")) (not (empty .Values.elastic.service1.nodePort)) }}
+      nodePort: {{ .Values.elastic.service1.nodePort }}
+      {{ end }}
+  selector:
+    {{- include "elastic.selectorLabels" . | nindent 4 }}

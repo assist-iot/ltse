@@ -1,0 +1,799 @@
+{
+	"info": {
+		"_postman_id": "e95a44ac-6e56-4ea5-8ae5-308dd36f9b23",
+		"name": "LTSE",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24439906"
+	},
+	"item": [
+		{
+			"name": "SQL API",
+			"item": [
+				{
+					"name": "PostgREST API",
+					"item": [
+						{
+							"name": "SQL API proxy",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept-Profile",
+										"value": "example",
+										"description": "schema name to connect",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{host}}:{{port}}/sql/api/",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}",
+									"path": [
+										"sql",
+										"api",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get SQL data from a table",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept-Profile",
+										"value": "example",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{host}}:{{port}}/sql/api/enablerlist",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}",
+									"path": [
+										"sql",
+										"api",
+										"enablerlist"
+									],
+									"query": [
+										{
+											"key": "order",
+											"value": "id.asc",
+											"disabled": true
+										},
+										{
+											"key": "select",
+											"value": "id, name",
+											"description": "get only selected fiels",
+											"disabled": true
+										},
+										{
+											"key": "select",
+											"value": "number_of_components:components",
+											"description": "change the column name",
+											"disabled": true
+										},
+										{
+											"key": "id",
+											"value": "gte.2",
+											"description": "filter values",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Insert SQL data in a table",
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Profile",
+										"value": "example",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"vpn 1\",\r\n    \"description\": \"VPN 1 enabler based on WireGuard\",\r\n    \"components\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}:{{port}}/sql/api/enablerlist",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}",
+									"path": [
+										"sql",
+										"api",
+										"enablerlist"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete SQL data from a table",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Profile",
+										"value": "example",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{host}}:{{port}}/sql/api/enablerlist",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}",
+									"path": [
+										"sql",
+										"api",
+										"enablerlist"
+									],
+									"query": [
+										{
+											"key": "components",
+											"value": "lte.3",
+											"description": "filter query by column",
+											"disabled": true
+										},
+										{
+											"key": "id",
+											"value": "eq.2",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Upsert data in a table",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Prefer",
+										"value": "resolution=merge-duplicates",
+										"type": "text"
+									},
+									{
+										"key": "Content-Profile",
+										"value": "example",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "[\r\n    {\r\n        \"id\": 1,\r\n        \"name\": \"vpn-updated\",\r\n        \"description\": \"The VPN enabler based on WireGuard VPN has been updated\",\r\n        \"components\": 2\r\n    }\r\n]",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}:{{port}}/sql/api/enablerlist?on_conflict=id",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}",
+									"path": [
+										"sql",
+										"api",
+										"enablerlist"
+									],
+									"query": [
+										{
+											"key": "on_conflict",
+											"value": "id"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Upsert a single row in a table",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Profile",
+										"value": "example",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\": 1,\r\n    \"name\": \"updated name\",\r\n    \"description\": \"This is the updated peer of the application\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}:{{port}}/sql/api/enablerlist?id=eq.1",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}",
+									"path": [
+										"sql",
+										"api",
+										"enablerlist"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "eq.1"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Create schema",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{host}}:{{port}}/sql/schemas/example",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"sql",
+								"schemas",
+								"example"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Schemas",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-postgrest-reload-schema",
+								"value": "true",
+								"type": "text"
+							},
+							{
+								"key": "Accept-Profile",
+								"value": "public",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"schema_name\": \"dashboard\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/sql/schemas?activesInPostgRest=true",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"sql",
+								"schemas"
+							],
+							"query": [
+								{
+									"key": "activesInPostgRest",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Activate schema in PostgRest",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "x-postgrest-reload-schema",
+								"value": "true",
+								"type": "text"
+							},
+							{
+								"key": "Accept-Profile",
+								"value": "public",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"schema_name\": \"dashboard\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/sql/schemas/ejemplo?isActiveInPostgRest=false",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"sql",
+								"schemas",
+								"ejemplo"
+							],
+							"query": [
+								{
+									"key": "isActiveInPostgRest",
+									"value": "false"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a SQL table in a database",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"columns\": [\r\n        {\r\n            \"name\": \"id\",\r\n            \"type\": \"integer NOT NULL PRIMARY KEY\"\r\n        },\r\n        {\r\n            \"name\": \"name\",\r\n            \"type\": \"varchar(255)\"\r\n        },\r\n        {\r\n            \"name\": \"description\",\r\n            \"type\": \"varchar(255)\"\r\n        },\r\n        {\r\n            \"name\": \"components\",\r\n            \"type\": \"integer\"\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/sql/schemas/example/tables/enabler",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"sql",
+								"schemas",
+								"example",
+								"tables",
+								"enabler"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a SQL table in a database with constraints",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"columns\": [\r\n        {\r\n            \"name\": \"id\",\r\n            \"type\": \"integer NOT NULL\"\r\n        },\r\n        {\r\n            \"name\": \"name\",\r\n            \"type\": \"varchar(255)\"\r\n        },\r\n        {\r\n            \"name\": \"description\",\r\n            \"type\": \"varchar(255)\"\r\n        },\r\n        {\r\n            \"name\": \"components\",\r\n            \"type\": \"integer\"\r\n        }\r\n    ],\r\n    \"constraints\": [\r\n        {\r\n            \"name\": \"pk_enablerlist\",\r\n            \"type\": \"PRIMARY KEY (id)\"\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/sql/schemas/example/tables/enablerlist",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"sql",
+								"schemas",
+								"example",
+								"tables",
+								"enablerlist"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a SQL table auto-increment pk in a database",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"columns\": [\r\n        {\r\n            \"name\": \"id\",\r\n            \"type\": \"SERIAL PRIMARY KEY\"\r\n        },\r\n        {\r\n            \"name\": \"name\",\r\n            \"type\": \"varchar(255)\"\r\n        },\r\n        {\r\n            \"name\": \"description\",\r\n            \"type\": \"varchar(255)\"\r\n        },\r\n        {\r\n            \"name\": \"components\",\r\n            \"type\": \"integer\"\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/sql/schemas/example/tables/enablerlist",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"sql",
+								"schemas",
+								"example",
+								"tables",
+								"enablerlist"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a SQL table in a database",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}:{{port}}/sql/schemas/example/tables/enabler?constraint=CASCADE",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"sql",
+								"schemas",
+								"example",
+								"tables",
+								"enabler"
+							],
+							"query": [
+								{
+									"key": "constraint",
+									"value": "CASCADE",
+									"description": "CASCADE or RESTRICT"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Truncate SQL data from a table",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{host}}:{{port}}/sql/schemas/example/tables/enabler",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"sql",
+								"schemas",
+								"example",
+								"tables",
+								"enabler"
+							],
+							"query": [
+								{
+									"key": "identity",
+									"value": "RESTART",
+									"description": "RESTART or IDENTITY",
+									"disabled": true
+								},
+								{
+									"key": "constraint",
+									"value": "CASCADE",
+									"description": "CASCADE or RESTRICT",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "NoSQL API",
+			"item": [
+				{
+					"name": "elasticAPI",
+					"item": [
+						{
+							"name": "NoSQL API proxy",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}:{{port}}/nosql/api/",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}",
+									"path": [
+										"nosql",
+										"api",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get all docs from INDEX",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}:{{port}}/nosql/api/example/_search?pretty=true&q=*:*",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}",
+									"path": [
+										"nosql",
+										"api",
+										"example",
+										"_search"
+									],
+									"query": [
+										{
+											"key": "pretty",
+											"value": "true"
+										},
+										{
+											"key": "q",
+											"value": "*:*"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Create NoSQL INDEX",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/nosql/index/example",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"nosql",
+								"index",
+								"example"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get INDEX Info",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/nosql/index/example",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"nosql",
+								"index",
+								"example"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add document without ID to an index",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"name\":        \"vpn 1\",\r\n\t\"description\": \"VPN 1 enabler based on WireGuard\",\r\n\t\"components\":  1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/nosql/index/example/document",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"nosql",
+								"index",
+								"example",
+								"document"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add document with ID to an index",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"name\":        \"vpn 3\",\r\n\t\"description\": \"VPN 3 enabler based on WireGuard\",\r\n\t\"components\":  1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/nosql/index/pruebas1/document/123456789",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"nosql",
+								"index",
+								"pruebas1",
+								"document",
+								"123456789"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get document by ID from an index",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 1,\r\n    \"name\": \"prueba\",\r\n    \"description\": \"prueba This is the updated peer of the application\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/nosql/index/pruebas1/document/1",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"nosql",
+								"index",
+								"pruebas1",
+								"document",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "api-export",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}:{{port}}/api-export",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"api-export"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "host",
+			"value": "localhost",
+			"type": "string"
+		},
+		{
+			"key": "port",
+			"value": "8080",
+			"type": "string"
+		}
+	]
+}

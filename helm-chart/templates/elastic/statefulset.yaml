@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "elastic.name" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "elastic.labels" . | nindent 4 }}
+spec:
+  serviceName: {{ include "elastic.name" . }}-headless
+  {{- if not .Values.elastic.autoscaling.enabled }}
+  replicas: {{ .Values.elastic.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "elastic.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "elastic.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.elastic.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.elastic.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Values.elastic.name }}
+          securityContext:
+            {{- toYaml .Values.elastic.securityContext | nindent 12 }}
+          image: "{{ .Values.elastic.image.repository }}:{{ .Values.elastic.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.elastic.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.elastic.service1.containerPort }}
+              protocol: {{ .Values.elastic.service1.protocol }}
+            - containerPort: {{ .Values.elastic.service2.containerPort }}
+              protocol: {{ .Values.elastic.service2.protocol }}
+          resources:
+            {{- toYaml .Values.elastic.resources | nindent 12 }}
+          {{- with .Values.elastic.envVars }}
+          env:
+            - name: discovery.type
+              value: {{ .discoveryType | quote }}
+            - name: node.name
+              value: {{ .nodeName | quote }}
+          {{- end }}
+          volumeMounts:
+            - name: data
+              mountPath: /usr/share/elasticsearch/data
+      {{- with .Values.elastic.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.elastic.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.elastic.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+        {{- range .Values.elastic.persistence.accessModes }}
+          - {{ . | quote }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.elastic.persistence.size | quote }}
